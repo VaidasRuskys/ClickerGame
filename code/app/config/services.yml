@@ -12,7 +12,7 @@ services:
         autoconfigure: true
         # this means you cannot fetch services directly from the container via $container->get()
         # if you need to do this, you can override this setting on individual services
-        public: false
+        public: true
 
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -33,3 +33,30 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    ClickerGameBundle\Filter\ItemFilter: ~
+    ClickerGameBundle\Filter\ActionFilter: ~
+    ClickerGameBundle\Filter\PlayerFilter: ~
+
+    main_request_factory:
+        class: ClickerGameBundle\Factory\RequestFactory
+        arguments:
+            - '@monolog.logger'
+        calls:
+            - ['addFilter', ['@ClickerGameBundle\Filter\ItemFilter']]
+            - ['addFilter', ['@ClickerGameBundle\Filter\ActionFilter']]
+
+    player_request_factory:
+        class: ClickerGameBundle\Factory\RequestFactory
+        arguments:
+            - '@monolog.logger'
+        calls:
+            - ['addFilter', ['@ClickerGameBundle\Filter\PlayerFilter']]
+
+    main_request:
+        class: ClickerGameBundle\Model\Request
+        factory: main_request_factory:createRequest
+
+    player_request:
+        class: ClickerGameBundle\Model\Request
+        factory: player_request_factory:createRequest
