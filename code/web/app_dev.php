@@ -21,7 +21,12 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 require __DIR__.'/../vendor/autoload.php';
 Debug::enable();
 
-$kernel = new AppKernel('dev', true);
+if($_SERVER['HTTP_HOST'] == 'clickergame.test:8080') {
+    $kernel = new AppKernel('dev', true);
+} else {
+    $kernel = new AppKernel('prod', false);
+}
+
 if (PHP_VERSION_ID < 70000) {
     $kernel->loadClassCache();
 }
